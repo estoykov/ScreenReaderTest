@@ -17,6 +17,7 @@ namespace ScreenReaderTest
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             var mainWindow = new MainWindow();
+            mainWindow.Show(true);
             Application.Run();
         }
     }

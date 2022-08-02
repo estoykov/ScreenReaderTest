@@ -33,6 +33,15 @@ namespace ScreenReaderTest
             }
         }
 
+        public Rectangle ClientRect
+        {
+            get
+            {
+                Win32.GetClientRect(Handle, out sRECT sClientRect);
+                return sClientRect.ToRectangle();
+            }
+        }
+
         public FormWindowState WindowState
         {
             get
@@ -45,6 +54,41 @@ namespace ScreenReaderTest
         {
             var cmdShow = activate ? Win32.SW_SHOW : Win32.SW_SHOWNA;
             Win32.ShowWindow(Handle, cmdShow);
+        }
+
+        public Point PointToClient(int x, int y)
+        {
+            return Utils.PointToClient(Handle, x, y);
+        }
+
+        public Point PointToClient(Point point)
+        {
+            return PointToClient(point.X, point.Y);
+        }
+
+        public Point PointToScreen(int x, int y)
+        {
+            return Utils.PointToScreen(Handle, x, y);
+        }
+
+        public Point PointToScreen(Point point)
+        {
+            return PointToScreen(point.X, point.Y);
+        }
+
+        public void SetParent(IntPtr hParent)
+        {
+            Win32.SetParent(Handle, hParent);
+        }
+
+        public void SetBounds(Rectangle bounds)
+        {
+            Win32.SetWindowBounds(Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        }
+
+        public void SetBounds(IntPtr insertAfter, Rectangle bounds)
+        {
+            Win32.SetWindowBounds(Handle, insertAfter, bounds.X, bounds.Y, bounds.Width, bounds.Height);
         }
 
         protected override void WndProc(ref Message m)
@@ -188,6 +232,7 @@ namespace ScreenReaderTest
         protected void FillBackground(IntPtr hDC, Color color)
         {
             var bounds = Bounds;
+            bounds.Location = Point.Empty;
             Utils.FillRect(hDC, bounds, color);
         }
     }

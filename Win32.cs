@@ -357,6 +357,11 @@ namespace ScreenReaderTest
 
         public const int WM_REFLECT = WM_USER + 0x1C00;
 
+        public const int GWL_WNDPROC = -4;
+        public const int GWL_HWNDPARENT = -8;
+        public const int GWL_STYLE = -16;
+        public const int GWL_EXSTYLE = -20;
+
         public const int WS_BORDER = 0x00800000; // The window has a thin-line border.
         public const int WS_CAPTION = 0x00C00000; // The window has a title bar (includes the WS_BORDER style).
         public const int WS_CHILD = 0x40000000; // The window is a child window. A window with this style cannot have a menu bar.
@@ -470,12 +475,12 @@ namespace ScreenReaderTest
             return Rectangle.Empty;
         }
 
-        public void SetWindowBounds(IntPtr hWnd, int x, int y, int width, int height)
+        public static void SetWindowBounds(IntPtr hWnd, int x, int y, int width, int height)
         {
             SetWindowPos(hWnd, IntPtr.Zero, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
         }
 
-        public void SetWindowBounds(IntPtr hWnd, IntPtr insertAfter, int x, int y, int width, int height)
+        public static void SetWindowBounds(IntPtr hWnd, IntPtr insertAfter, int x, int y, int width, int height)
         {
             SetWindowPos(hWnd, insertAfter, x, y, width, height, SWP_NOACTIVATE);
         }
@@ -504,13 +509,42 @@ namespace ScreenReaderTest
             return result;
         }
 
+        public static int GetWindowStyles(IntPtr hwnd)
+        {
+            return (int)(GetWindowLong(hwnd, GWL_STYLE).ToInt64() & 0x00000000FFFFFFFF);
+        }
+
+        public static void SetWindowStyles(IntPtr hwnd, int styles)
+        {
+            SetWindowLong(hwnd, GWL_STYLE, styles);
+        }
+
+        public static int GetWindowExStyles(IntPtr hwnd)
+        {
+            return (int)(GetWindowLong(hwnd, GWL_EXSTYLE).ToInt64() & 0x00000000FFFFFFFF);
+        }
+
+        public static void SetWindowExStyles(IntPtr hwnd, int styles)
+        {
+            SetWindowLong(hwnd, GWL_EXSTYLE, styles);
+        }
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out sRECT lpRect);
 
         [DllImport("user32.dll")]
+        public static extern bool GetClientRect(IntPtr hWnd, out sRECT lpRect);
+
+        [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowPlacement(IntPtr hWnd, ref sWINDOWPLACEMENT lpwndpl);
+
+        [DllImport("user32.dll")]
+        public static extern bool ClientToScreen(IntPtr hWnd, ref sPOINT lpPoint);
+
+        [DllImport("user32.dll")]
+        public static extern bool ScreenToClient(IntPtr hWnd, ref sPOINT lpPoint);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int wFlags);
@@ -530,5 +564,44 @@ namespace ScreenReaderTest
         [DllImport("User32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        public static IntPtr GetWindowLong(IntPtr hWnd, int nIndex)
+        {
+            if (IntPtr.Size == 4)
+            {
+                return GetWindowLong32(hWnd, nIndex);
+            }
+            else
+            {
+                return GetWindowLongPtr64(hWnd, nIndex);
+            }
+        }
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetWindowLong32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
+
+        public static IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr data)
+        {
+            if (IntPtr.Size == 4)
+            {
+                return SetWindowLongPtr32(hWnd, nIndex, data);
+            }
+            else
+            {
+                return SetWindowLongPtr64(hWnd, nIndex, data);
+            }
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong", CharSet = CharSet.Auto)]
+        public static extern IntPtr SetWindowLongPtr32(IntPtr hWnd, int nIndex, IntPtr data);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr", CharSet = CharSet.Auto)]
+        public static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr data);
+
+        [DllImport("user32.dll")]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
     }
 }

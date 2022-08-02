@@ -10,9 +10,12 @@ namespace ScreenReaderTest
 {
     public class MainWindow : CustomNativeWindow
     {
+        public DecorationsWindow DecorationsWindow { get; private set; }
+
         public MainWindow()
         {
             InitWindow();
+            AddDecorationsWindow();
         }
 
         private void InitWindow()
@@ -22,13 +25,16 @@ namespace ScreenReaderTest
             createParams.Y = 100;
             createParams.Width = 800;
             createParams.Height = 600;
-            createParams.Style = 
-                Win32.WS_CLIPCHILDREN | Win32.WS_CLIPSIBLINGS |
-                Win32.WS_OVERLAPPED | Win32.WS_CAPTION | Win32.WS_SYSMENU |
-                Win32.WS_MINIMIZEBOX | Win32.WS_MAXIMIZEBOX | Win32.WS_THICKFRAME;
             createParams.Caption = "Screen reader test";
             CreateHandle(createParams);
-            Show(true);
+            Utils.SetTopWindowStyles(Handle);
+        }
+
+        private void AddDecorationsWindow()
+        {
+            DecorationsWindow = new DecorationsWindow();
+            DecorationsWindow.SetParent(Handle);
+            DecorationsWindow.Show(false);
         }
 
         protected override void OnDestroyedCore()
@@ -46,6 +52,18 @@ namespace ScreenReaderTest
         {
             FillBackground(hDC, Color.White);
             return true;
+        }
+
+        protected override void OnBoundsChangedCore(Rectangle prevBounds, Rectangle newBounds)
+        {
+            base.OnBoundsChangedCore(prevBounds, newBounds);
+            UpdateChildrenBounds();
+        }
+
+        private void UpdateChildrenBounds()
+        {
+            var clientRect = ClientRect;
+            DecorationsWindow.SetBounds(Win32.HWND_TOP, clientRect);
         }
     }
 }
