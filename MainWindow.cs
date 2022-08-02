@@ -10,12 +10,28 @@ namespace ScreenReaderTest
 {
     public class MainWindow : CustomNativeWindow
     {
-        public DecorationsWindow DecorationsWindow { get; private set; }
+        private bool decorationsOnTop_ = true;
 
         public MainWindow()
         {
             InitWindow();
             AddDecorationsWindow();
+        }
+
+        public DecorationsWindow DecorationsWindow { get; private set; }
+
+        public string ZOrderText
+        { 
+            get
+            {
+                return decorationsOnTop_ ? "Decorations on top" : "Decorations at bottom";
+            }
+        }
+
+        public void ToggleZOrder()
+        {
+            decorationsOnTop_ = !decorationsOnTop_;
+            UpdateChildrenBounds();
         }
 
         private void InitWindow()
@@ -32,7 +48,7 @@ namespace ScreenReaderTest
 
         private void AddDecorationsWindow()
         {
-            DecorationsWindow = new DecorationsWindow();
+            DecorationsWindow = new DecorationsWindow(this);
             DecorationsWindow.SetParent(Handle);
             DecorationsWindow.Show(false);
         }
@@ -50,7 +66,6 @@ namespace ScreenReaderTest
 
         protected override bool OnPaintCore(IntPtr hDC)
         {
-            FillBackground(hDC, Color.White);
             return true;
         }
 
@@ -63,7 +78,8 @@ namespace ScreenReaderTest
         private void UpdateChildrenBounds()
         {
             var clientRect = ClientRect;
-            DecorationsWindow.SetBounds(Win32.HWND_TOP, clientRect);
+            var decoratonsInsertAfter = decorationsOnTop_ ? Win32.HWND_TOP : Win32.HWND_BOTTOM;
+            DecorationsWindow.SetBounds(decoratonsInsertAfter, clientRect);
         }
     }
 }

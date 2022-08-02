@@ -431,6 +431,9 @@ namespace ScreenReaderTest
         public const int SWP_ASYNCWINDOWPOS = 0x4000;
         public const int SWP_STATECHANGED = 0x8000;
 
+        public const int LWA_ALPHA = 0x2;
+        public const int LWA_COLORKEY = 0x1;
+
         [DllImport("user32.dll")]
         public static extern IntPtr SetParent(IntPtr hWnd, IntPtr newParent);
 
@@ -603,5 +606,8 @@ namespace ScreenReaderTest
 
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, int crKey, byte bAlpha, uint dwFlags);
     }
 }

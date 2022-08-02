@@ -35,6 +35,14 @@ namespace ScreenReaderTest
             Win32.SetWindowExStyles(handle, exStyles);
         }
 
+        public static void SetLayeredWindowStyles(IntPtr handle, Color keyColor)
+        {
+            var exStyles = Win32.GetWindowExStyles(handle);
+            exStyles = exStyles | Win32.WS_EX_LAYERED;
+            Win32.SetWindowExStyles(handle, exStyles);
+            Win32.SetLayeredWindowAttributes(handle, ColorTranslator.ToWin32(keyColor), 0, Win32.LWA_COLORKEY);
+        }
+
         public static Point PointToScreen(IntPtr handle, int x, int y)
         {
             var p = new sPOINT() { x = x, y = y };
