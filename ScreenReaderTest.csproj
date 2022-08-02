@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationWindow.cs" />
     <Compile Include="CustomNativeWindow.cs" />
     <Compile Include="DecorationsWindow.cs" />
     <Compile Include="MainWindow.cs" />

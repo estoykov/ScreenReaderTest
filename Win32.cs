@@ -478,9 +478,19 @@ namespace ScreenReaderTest
             return Rectangle.Empty;
         }
 
+        public static void SetWindowBounds(IntPtr hWnd, Rectangle bounds)
+        {
+            SetWindowBounds(hWnd, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        }
+
         public static void SetWindowBounds(IntPtr hWnd, int x, int y, int width, int height)
         {
             SetWindowPos(hWnd, IntPtr.Zero, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+
+        public static void SetWindowBounds(IntPtr hWnd, IntPtr insertAfter, Rectangle bounds)
+        {
+            SetWindowBounds(hWnd, insertAfter, bounds.X, bounds.Y, bounds.Width, bounds.Height);
         }
 
         public static void SetWindowBounds(IntPtr hWnd, IntPtr insertAfter, int x, int y, int width, int height)

@@ -83,12 +83,12 @@ namespace ScreenReaderTest
 
         public void SetBounds(Rectangle bounds)
         {
-            Win32.SetWindowBounds(Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+            Win32.SetWindowBounds(Handle, bounds);
         }
 
         public void SetBounds(IntPtr insertAfter, Rectangle bounds)
         {
-            Win32.SetWindowBounds(Handle, insertAfter, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+            Win32.SetWindowBounds(Handle, insertAfter, bounds);
         }
 
         protected override void WndProc(ref Message m)

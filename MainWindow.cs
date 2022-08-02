@@ -15,10 +15,12 @@ namespace ScreenReaderTest
         public MainWindow()
         {
             InitWindow();
-            AddDecorationsWindow();
+            AddChildren();
         }
 
         public DecorationsWindow DecorationsWindow { get; private set; }
+
+        public ApplicationWindow ApplicationWindow { get; private set; }
 
         public string ZOrderText
         { 
@@ -46,11 +48,14 @@ namespace ScreenReaderTest
             Utils.SetTopWindowStyles(Handle);
         }
 
-        private void AddDecorationsWindow()
+        private void AddChildren()
         {
             DecorationsWindow = new DecorationsWindow(this);
             DecorationsWindow.SetParent(Handle);
             DecorationsWindow.Show(false);
+            ApplicationWindow = new ApplicationWindow();
+            ApplicationWindow.SetParent(Handle);
+            ApplicationWindow.Show(false);
         }
 
         protected override void OnDestroyedCore()
@@ -80,6 +85,9 @@ namespace ScreenReaderTest
             var clientRect = ClientRect;
             var decoratonsInsertAfter = decorationsOnTop_ ? Win32.HWND_TOP : Win32.HWND_BOTTOM;
             DecorationsWindow.SetBounds(decoratonsInsertAfter, clientRect);
+            var windowArea = DecorationsWindow.WindowArea;
+            var applicationInsertAfter = decorationsOnTop_ ? Win32.HWND_BOTTOM : Win32.HWND_TOP;
+            ApplicationWindow.SetBounds(applicationInsertAfter, windowArea);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace ScreenReaderTest
         {
             MainWindow = mainWindow;
             InitWindow();
-            AddDecorations();
+            AddControls();
         }
 
         public MainWindow MainWindow { get; }
@@ -24,6 +24,16 @@ namespace ScreenReaderTest
         public Panel ControlPanel { get; private set; }
         public Button ZOrderButton { get; private set; }
         public Label ZOrderLabel { get; private set; }
+
+        public Rectangle WindowArea
+        {
+            get
+            {
+                var clientRect = ClientRect;
+                clientRect.Y += ControlPanel.Height;
+                return clientRect;
+            }
+        }
 
         private void InitWindow()
         {
@@ -34,7 +44,7 @@ namespace ScreenReaderTest
             Utils.SetLayeredWindowStyles(Handle, KeyColor);
         }
 
-        private void AddDecorations()
+        private void AddControls()
         {
             ZOrderButton = new Button();
             ZOrderButton.Text = "Z-order";
