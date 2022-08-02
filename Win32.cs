@@ -462,6 +462,12 @@ namespace ScreenReaderTest
             return (charsCopied > 0) ? text.ToString() : null;
         }
 
+        public static void SetWindowCaption(IntPtr hWnd, string caption)
+        {
+            var text = caption ?? "";
+            Win32.SendMessage(hWnd, Win32.WM_SETTEXT, IntPtr.Zero, text);
+        }
+
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetWindowTextLength(IntPtr hWnd);
 

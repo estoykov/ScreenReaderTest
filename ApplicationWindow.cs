@@ -30,14 +30,16 @@ namespace ScreenReaderTest
         private void AddControls()
         {
             TextLabel = new Label();
-            TextLabel.Dock = DockStyle.Fill;
             TextLabel.Text = "The quick brown fox jumps over the lazy dog";
+            TextLabel.AutoSize = true;
             TextLabel.TextAlign = ContentAlignment.MiddleCenter;
             ContentPanel = new Panel();
+            ContentPanel.BackColor = Color.AntiqueWhite;
             ContentPanel.CreateControl();
             ContentPanel.Controls.Add(TextLabel);
             Win32.SetParent(ContentPanel.Handle, Handle);
             ContentPanel.Visible = true;
+            Win32.SetWindowCaption(ContentPanel.Handle, "Application content");
         }
 
         protected override void OnBoundsChangedCore(Rectangle prevBounds, Rectangle newBounds)
@@ -45,6 +47,8 @@ namespace ScreenReaderTest
             base.OnBoundsChangedCore(prevBounds, newBounds);
             var clientRect = ClientRect;
             Win32.SetWindowBounds(ContentPanel.Handle, clientRect);
+            TextLabel.Left = Math.Max((clientRect.Width - TextLabel.Width) / 2, 0);
+            TextLabel.Top = Math.Max((clientRect.Height - TextLabel.Height) / 2, 0);
         }
     }
 }

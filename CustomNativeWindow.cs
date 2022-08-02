@@ -20,8 +20,7 @@ namespace ScreenReaderTest
             }
             set
             {
-                var text = value ?? "";
-                Win32.SendMessage(Handle, Win32.WM_SETTEXT, IntPtr.Zero, text);
+                Win32.SetWindowCaption(Handle, value);
             }
         }
 

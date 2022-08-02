@@ -51,7 +51,6 @@ namespace ScreenReaderTest
             ZOrderButton.Dock = DockStyle.Left;
             ZOrderButton.Click += OnZOrderButtonClick;
             ZOrderLabel = new Label();
-            ZOrderLabel.Dock = DockStyle.Left;
             ZOrderLabel.AutoSize = true;
             UpdateZOrderText();
             ControlPanel = new Panel();
@@ -62,6 +61,7 @@ namespace ScreenReaderTest
             ControlPanel.Controls.Add(ZOrderButton);
             Win32.SetParent(ControlPanel.Handle, Handle);
             ControlPanel.Visible = true;
+            Win32.SetWindowCaption(ControlPanel.Handle, "Control panel");
         }
 
         protected override void OnBoundsChangedCore(Rectangle prevBounds, Rectangle newBounds)
@@ -81,6 +81,9 @@ namespace ScreenReaderTest
             var clientRect = ClientRect;
             var controlPanelBounds = new Rectangle(clientRect.X, clientRect.Y, clientRect.Width, ControlPanel.Height);
             ControlPanel.Bounds = controlPanelBounds;
+            var zOrderButtonBounds = ZOrderButton.Bounds;
+            ZOrderLabel.Left = zOrderButtonBounds.Right + 5;
+            ZOrderLabel.Top = Math.Max((controlPanelBounds.Height - ZOrderLabel.Height) / 2, 0);
         }
 
         private void UpdateZOrderText()
