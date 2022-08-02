@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="ApplicationWindow.cs" />
     <Compile Include="CustomNativeWindow.cs" />
-    <Compile Include="DecorationsWindow.cs" />
+    <Compile Include="ControlsWindow.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

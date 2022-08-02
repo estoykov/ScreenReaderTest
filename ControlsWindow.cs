@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace ScreenReaderTest
 {
-    public class DecorationsWindow : CustomNativeWindow
+    public class ControlsWindow : CustomNativeWindow
     {
         public static Color KeyColor = Color.Fuchsia;
 
-        public DecorationsWindow(MainWindow mainWindow)
+        public ControlsWindow(MainWindow mainWindow)
         {
             MainWindow = mainWindow;
             InitWindow();
@@ -38,7 +38,7 @@ namespace ScreenReaderTest
         private void InitWindow()
         {
             var createParams = new CreateParams();
-            createParams.Caption = "Decorations window";
+            createParams.Caption = "Controls window";
             CreateHandle(createParams);
             Utils.SetChildWindowStyles(Handle);
             Utils.SetLayeredWindowStyles(Handle, KeyColor);
@@ -68,6 +68,11 @@ namespace ScreenReaderTest
         {
             base.OnBoundsChangedCore(prevBounds, newBounds);
             UpdateChildrenBounds();
+        }
+
+        protected override bool OnEraseBackgroundCore(IntPtr hDC)
+        {
+            return true;
         }
 
         protected override bool OnPaintCore(IntPtr hDC)

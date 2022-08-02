@@ -10,7 +10,7 @@ namespace ScreenReaderTest
 {
     public class MainWindow : CustomNativeWindow
     {
-        private bool decorationsOnTop_ = true;
+        private bool controlsOnTop_ = true;
 
         public MainWindow()
         {
@@ -18,7 +18,7 @@ namespace ScreenReaderTest
             AddChildren();
         }
 
-        public DecorationsWindow DecorationsWindow { get; private set; }
+        public ControlsWindow ControlsWindow { get; private set; }
 
         public ApplicationWindow ApplicationWindow { get; private set; }
 
@@ -26,13 +26,13 @@ namespace ScreenReaderTest
         { 
             get
             {
-                return decorationsOnTop_ ? "Decorations on top" : "Decorations at bottom";
+                return controlsOnTop_ ? "Controls on top" : "Controls at bottom";
             }
         }
 
         public void ToggleZOrder()
         {
-            decorationsOnTop_ = !decorationsOnTop_;
+            controlsOnTop_ = !controlsOnTop_;
             UpdateChildrenBounds();
         }
 
@@ -50,9 +50,9 @@ namespace ScreenReaderTest
 
         private void AddChildren()
         {
-            DecorationsWindow = new DecorationsWindow(this);
-            DecorationsWindow.SetParent(Handle);
-            DecorationsWindow.Show(false);
+            ControlsWindow = new ControlsWindow(this);
+            ControlsWindow.SetParent(Handle);
+            ControlsWindow.Show(false);
             ApplicationWindow = new ApplicationWindow();
             ApplicationWindow.SetParent(Handle);
             ApplicationWindow.Show(false);
@@ -83,10 +83,10 @@ namespace ScreenReaderTest
         private void UpdateChildrenBounds()
         {
             var clientRect = ClientRect;
-            var decoratonsInsertAfter = decorationsOnTop_ ? Win32.HWND_TOP : Win32.HWND_BOTTOM;
-            DecorationsWindow.SetBounds(decoratonsInsertAfter, clientRect);
-            var windowArea = DecorationsWindow.WindowArea;
-            var applicationInsertAfter = decorationsOnTop_ ? Win32.HWND_BOTTOM : Win32.HWND_TOP;
+            var controlsInsertAfter = controlsOnTop_ ? Win32.HWND_TOP : Win32.HWND_BOTTOM;
+            ControlsWindow.SetBounds(controlsInsertAfter, clientRect);
+            var windowArea = ControlsWindow.WindowArea;
+            var applicationInsertAfter = controlsOnTop_ ? Win32.HWND_BOTTOM : Win32.HWND_TOP;
             ApplicationWindow.SetBounds(applicationInsertAfter, windowArea);
         }
     }

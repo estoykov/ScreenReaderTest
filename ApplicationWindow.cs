@@ -30,7 +30,7 @@ namespace ScreenReaderTest
         private void AddControls()
         {
             TextLabel = new Label();
-            TextLabel.Text = "The quick brown fox jumps over the lazy dog";
+            TextLabel.Text = "The quick brown fox jumps over the lazy dog.";
             TextLabel.AutoSize = true;
             TextLabel.TextAlign = ContentAlignment.MiddleCenter;
             ContentPanel = new Panel();
