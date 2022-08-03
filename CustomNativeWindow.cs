@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ namespace ScreenReaderTest
     public class CustomNativeWindow : NativeWindow
     {
         private Rectangle bounds_;
+        private CustomNativeWindowAccessibleObject accessibleObject_;
 
         public string Caption
         {
@@ -48,6 +50,8 @@ namespace ScreenReaderTest
                 return Win32.GetWindowState(Handle);
             }
         }
+
+        public AccessibleObject AccessibleObject => accessibleObject_;
 
         public void Show(bool activate)
         {
@@ -90,10 +94,37 @@ namespace ScreenReaderTest
             Win32.SetWindowBounds(Handle, insertAfter, bounds);
         }
 
+        public bool ContainsHandle(IntPtr handle)
+        {
+            return Handle == handle || Win32.IsChild(Handle, handle);
+        }
+
+        public AccessibleObject OnAccessibleObjectHitTest(int x, int y)
+        {
+            return OnAccessibleObjectHitTestCore(x, y);
+        }
+
+        protected override void OnHandleChange()
+        {
+            base.OnHandleChange();
+            if (SupportsAccessibiliyObject() && Handle != IntPtr.Zero)
+            {
+                accessibleObject_ = new CustomNativeWindowAccessibleObject(this);
+            }
+        }
+
         protected override void WndProc(ref Message m)
         {
             switch (m.Msg)
             {
+                case Win32.WM_GETOBJECT:
+                    var objId = m.LParam.ToInt64();
+                    if (accessibleObject_ != null && objId == Win32.OBJID_CLIENT)
+                    {
+                        OnGetAccessibiliyClient(ref m);
+                        return;
+                    }
+                    break;
                 case Win32.WM_ERASEBKGND:
                     if (OnEraseBackground(ref m))
                     {
@@ -111,7 +142,7 @@ namespace ScreenReaderTest
             switch (m.Msg)
             {
                 case Win32.WM_DESTROY:
-                    OnDestroyedCore();
+                    OnDestroyed();
                     break;
                 case Win32.WM_SHOWWINDOW:
                     OnShowWindow(m);
@@ -119,6 +150,26 @@ namespace ScreenReaderTest
                 case Win32.WM_WINDOWPOSCHANGED:
                     OnWindowPosChanged(m);
                     break;
+            }
+        }
+
+        private void OnGetAccessibiliyClient(ref Message m)
+        {
+            try
+            {
+                IntPtr pUnknown = Marshal.GetIUnknownForObject(accessibleObject_);
+                try
+                {
+                    m.Result = Win32.LresultFromObject(ref Win32.IID_IAccessible, m.WParam, new HandleRef(accessibleObject_, pUnknown));
+                }
+                finally
+                {
+                    Marshal.Release(pUnknown);
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -210,6 +261,12 @@ namespace ScreenReaderTest
             }
         }
 
+        private void OnDestroyed()
+        {
+            OnDestroyedCore();
+            accessibleObject_ = null;
+        }
+
         protected virtual void OnDestroyedCore()
         {
         }
@@ -233,6 +290,16 @@ namespace ScreenReaderTest
             var bounds = Bounds;
             bounds.Location = Point.Empty;
             Utils.FillRect(hDC, bounds, color);
+        }
+
+        protected virtual bool SupportsAccessibiliyObject()
+        {
+            return false;
+        }
+
+        protected virtual AccessibleObject OnAccessibleObjectHitTestCore(int x, int y)
+        {
+            return null;
         }
     }
 }

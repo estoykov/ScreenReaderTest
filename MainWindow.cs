@@ -58,6 +58,22 @@ namespace ScreenReaderTest
             ApplicationWindow.Show(false);
         }
 
+        protected override bool SupportsAccessibiliyObject()
+        {
+            return true;
+        }
+
+        protected override AccessibleObject OnAccessibleObjectHitTestCore(int x, int y)
+        {
+            var sPoint = new sPOINT() { x = x, y = y };
+            var target = Win32.WindowFromPoint(sPoint);
+            if (target != IntPtr.Zero && ApplicationWindow.ContainsHandle(target))
+            {
+                return ApplicationWindow.AccessibleObject;
+            }
+            return base.OnAccessibleObjectHitTestCore(x, y);
+        }
+
         protected override void OnDestroyedCore()
         {
             base.OnDestroyedCore();

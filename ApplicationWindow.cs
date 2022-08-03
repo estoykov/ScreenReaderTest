@@ -42,6 +42,11 @@ namespace ScreenReaderTest
             Win32.SetWindowCaption(ContentPanel.Handle, "Application content");
         }
 
+        protected override bool SupportsAccessibiliyObject()
+        {
+            return true;
+        }
+
         protected override void OnBoundsChangedCore(Rectangle prevBounds, Rectangle newBounds)
         {
             base.OnBoundsChangedCore(prevBounds, newBounds);

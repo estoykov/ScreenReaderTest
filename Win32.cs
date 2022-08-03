@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace ScreenReaderTest
 {
-
     [StructLayout(LayoutKind.Sequential)]
     public struct sWINDOWPOS
     {
@@ -92,6 +91,10 @@ namespace ScreenReaderTest
 
     public class Win32
     {
+        public static Guid IID_IAccessible = new Guid(0x618736e0, 0x3c3d, 0x11cf, 0x81, 0x0c, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
+
+        public const int OBJID_CLIENT = -4;
+
         public const int S_OK = 0;
 
         public const int WM_NULL = 0x0000;
@@ -623,7 +626,19 @@ namespace ScreenReaderTest
         [DllImport("user32.dll")]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool IsChild(IntPtr hWndParent, IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr WindowFromPoint(sPOINT point);
+
         [DllImport("user32.dll")]
         public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, int crKey, byte bAlpha, uint dwFlags);
+
+        [DllImport("oleacc.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern int CreateStdAccessibleObject(HandleRef handleRef, int objID, ref Guid refiid, [In, Out, MarshalAs(UnmanagedType.Interface)] ref object pAcc);
+
+        [DllImport("oleacc.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr LresultFromObject(ref Guid refiid, IntPtr wParam, HandleRef pAcc);
     }
 }
